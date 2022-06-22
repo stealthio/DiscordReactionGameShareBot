@@ -4,6 +4,15 @@ A bot that sends a message with reactions to a configurable channel. Each reacti
 
 ![grafik](https://user-images.githubusercontent.com/20127926/175168716-53eae76e-9e2c-4a13-afe6-db1d0cd509e4.png)
 
+Each reaction is mapped in a JSON to any amount of controller inputs to allow complex interactions.
+```
+"⏫": {
+    "commands" : ["a", "wait_medium", "a"],
+    "duration" : 0.5
+},
+```
+Take a look at the included JSON files for reference.
+
 Currently the following commands are implemented:
 
 **Left Analogue Stick**
