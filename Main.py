@@ -127,39 +127,67 @@ class DiscordClient(discord.Client):
     async def on_reaction_add(self, reaction, user):
         if user == self.user:
             return
-        if reaction.emoji in config["teams"]:
-            self.user_mapping[user.id] =  config["teams"][reaction.emoji]
+        if reaction.emoji in gameConfig["teams"]:
+            # check if the user is in the team already, if so, remove them
+            if user.id in self.user_mapping:
+                if self.user_mapping[user.id] == gameConfig["teams"][reaction.emoji]:
+                    self.user_mapping[user.id] = None
+                    for message in self.teammessages:
+                        if user.mention in self.teammessages[message].content:
+                            await self.teammessages[message].edit(content=self.teammessages[message].content.replace(user.mention, ""))
+                    await reaction.remove(user)
+                    return
+
+            self.user_mapping[user.id] = gameConfig["teams"][reaction.emoji]
+            for message in self.teammessages:
+                if user.mention in self.teammessages[message].content:
+                    await self.teammessages[message].edit(content = self.teammessages[message].content.replace(user.mention, ""))
+            await self.teammessages[reaction.emoji].edit(content = self.teammessages[reaction.emoji].content + " " + user.mention)
+
         if not user.id in self.user_mapping:
+            await reaction.remove(user)
             return
         
         target_mapper = mappers[self.user_mapping[user.id]]
 
-        if reaction.emoji in config["actions"]:
-            action = config["actions"][reaction.emoji]
+        if reaction.emoji in gameConfig["actions"]:
+            action = gameConfig["actions"][reaction.emoji]
             target_mapper.exec_actions(action)
 
         await reaction.remove(user)
 
     async def on_ready(self):
-        # get the first text channel on the discord server 
-        self.channel = self.get_channel(989181971764748320)
+        self.channel = self.get_channel(config["channelId"])
+
+        # clean up previous messages
+        async for message in self.channel.history(limit=20):
+            if message.author == self.user:
+                await message.delete()
+
         team_message = await self.channel.send("Join a team")
 
-        for item in config["teams"]:
+        teams = []
+        for item in gameConfig["teams"]:
             await team_message.add_reaction(item)
             mappers.append(CommandToGamepadMapper(GamePad()))
-
+            teams.append(item)
+    
         action_message = await self.channel.send("Actions")
 
-        for k,v in config["actions"].items():
+        for k,v in gameConfig["actions"].items():
             await action_message.add_reaction(k)
+
+        self.teammessages = {}
+        for team in teams:
+            self.teammessages[team] = await self.channel.send("Team " + team + ":\n")
 
         self.user_mapping = {}
 
 mappers = []
 
-config = json.load(open('niddhog.json', 'rb'))
+config = json.load(open("config.json", 'rb'))
+gameConfig = json.load(open(config["gameConfiguration"], 'rb'))
 
 
 client = DiscordClient()
-client.run("")
+client.run(config["token"])
