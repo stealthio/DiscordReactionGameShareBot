@@ -34,9 +34,9 @@ class GamePad:
         self.gamepad.release_button(button)
         self.gamepad.update()
 
-    def queue_left_stick_direction(self, joystick_command):
+    def queue_stick_direction(self, joystick_command):
         self.input_queue.append(joystick_command)
-        
+
 class JoystickCommand:
     def __init__(self, left, x_amount, y_amount, duration, chained = False):
         self.left = left
@@ -77,7 +77,14 @@ class InputCommand:
         self.chained = chained
     
     def execute(self, gamepad_object):
-        gamepad_object.press_button(self.input)
+        if self.input == "lt":
+            gamepad_object.gamepad.left_trigger_float(value_float=1.0)
+        elif self.input == "rt":
+            gamepad_object.gamepad.right_trigger_float(value_float=1.0)
+        elif self.input == "wait":
+            return self.duration
+        else:
+            gamepad_object.press_button(self.input)
         timer = threading.Timer(self.duration, self.release, [gamepad_object])
         timer.start()
         if self.chained:
@@ -85,7 +92,12 @@ class InputCommand:
         return self.duration
     
     def release(self, gamepad_object):
-        gamepad_object.release_button(self.input)
+        if self.input == "lt":
+            gamepad_object.gamepad.left_trigger_float(value_float=0.0)
+        elif self.input == "rt":
+            gamepad_object.gamepad.right_trigger_float(value_float=0.0)
+        else:
+            gamepad_object.release_button(self.input)
 
 class CommandToGamepadMapper:
     def __init__(self, gamepad_object):
@@ -99,21 +111,38 @@ class CommandToGamepadMapper:
             chain = i < len(commands) - 1
             if command.startswith("left_stick"):
                 if command.endswith("_left"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, -1, 0, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, -1, 0, duration, chain))
                 elif command.endswith("_right"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, 1, 0, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, 1, 0, duration, chain))
                 elif command.endswith("_up"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, 0, 1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, 0, 1, duration, chain))
                 elif command.endswith("_down"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, 0, -1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, 0, -1, duration, chain))
                 elif command.endswith("_up_left"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, -1, 1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, -1, 1, duration, chain))
                 elif command.endswith("_up_right"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, 1, 1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, 1, 1, duration, chain))
                 elif command.endswith("_down_left"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, -1, -1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, -1, -1, duration, chain))
                 elif command.endswith("_down_right"):
-                    self.gamepad_object.queue_left_stick_direction(JoystickCommand(True, 1, -1, duration, chain))
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(True, 1, -1, duration, chain))
+            elif command.startswith("right_stick"):
+                if command.endswith("_left"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, -1, 0, duration, chain))
+                elif command.endswith("_right"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, 1, 0, duration, chain))
+                elif command.endswith("_up"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, 0, 1, duration, chain))
+                elif command.endswith("_down"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, 0, -1, duration, chain))
+                elif command.endswith("_up_left"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, -1, 1, duration, chain))
+                elif command.endswith("_up_right"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, 1, 1, duration, chain))
+                elif command.endswith("_down_left"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, -1, -1, duration, chain))
+                elif command.endswith("_down_right"):
+                    self.gamepad_object.queue_stick_direction(JoystickCommand(False, 1, -1, duration, chain))
             elif command == "a":
                 self.gamepad_object.queue_input(InputCommand(vgamepad.XUSB_BUTTON.XUSB_GAMEPAD_A, duration, chain))
             elif command == "b":
@@ -122,6 +151,18 @@ class CommandToGamepadMapper:
                 self.gamepad_object.queue_input(InputCommand(vgamepad.XUSB_BUTTON.XUSB_GAMEPAD_X, duration, chain))
             elif command == "y":
                 self.gamepad_object.queue_input(InputCommand(vgamepad.XUSB_BUTTON.XUSB_GAMEPAD_Y, duration, chain))
+            elif command == "lb":
+                self.gamepad_object.queue_input(InputCommand(vgamepad.XUSB_BUTTON.XUSB_GAMEPAD_LEFT_SHOULDER, duration, chain))
+            elif command == "rb":
+                self.gamepad_object.queue_input(InputCommand(vgamepad.XUSB_BUTTON.XUSB_GAMEPAD_RIGHT_SHOULDER, duration, chain))
+            elif command == "lt":
+                self.gamepad_object.queue_input(InputCommand("lt", duration, chain))
+            elif command == "rt":
+                self.gamepad_object.queue_input(InputCommand("rt", duration, chain))
+            elif command == "wait_short":
+                self.gamepad_object.queue_input(InputCommand("wait", 0.2, False))
+            elif command == "wait_medium":
+                self.gamepad_object.queue_input(InputCommand("wait", 0.5, False))
 
 class DiscordClient(discord.Client):
     async def on_reaction_add(self, reaction, user):
@@ -163,7 +204,6 @@ class DiscordClient(discord.Client):
         async for message in self.channel.history(limit=20):
             if message.author == self.user:
                 await message.delete()
-
         team_message = await self.channel.send("Join a team")
 
         teams = []

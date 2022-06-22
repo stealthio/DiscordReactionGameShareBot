@@ -1,0 +1,42 @@
+{
+    "teams" : {
+        "1️⃣" : 0,
+        "2️⃣" : 1,
+        "3️⃣" : 2,
+        "4️⃣" : 3
+    },
+    "actions": {
+        "⬅️": {
+            "commands" : ["left_stick_left"],
+            "duration" : 0.2
+        },
+        "➡️": {
+            "commands" : ["left_stick_right"],
+            "duration" : 0.2
+        },
+        "⬆️": {
+            "commands" : ["a"],
+            "duration" : 0.2
+        },
+        "⬇️": {
+            "commands" : ["left_stick_down"],
+            "duration" : 0.2
+        },
+        "↗️": {
+            "commands" : ["left_stick_right", "a"],
+            "duration" : 0.3
+        },
+        "↖️": {
+            "commands" : ["left_stick_left", "a"],
+            "duration" : 0.3
+        },
+        "❎": {
+            "commands" : ["x"],
+            "duration" : 0.25
+        },
+        "🅱️" : {
+            "commands" : ["y"],
+            "duration" : 0.25
+        }
+    }
+  }

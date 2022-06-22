@@ -1,0 +1,56 @@
+{
+    "teams" : {
+        "1️⃣" : 0,
+        "2️⃣" : 1
+    },
+    "actions": {
+        "⬅️": {
+            "commands" : ["left_stick_left"],
+            "duration" : 0.25
+        },
+        "➡️": {
+            "commands" : ["left_stick_right"],
+            "duration" : 0.25
+        },
+        "⬆️": {
+            "commands" : ["a"],
+            "duration" : 0.25
+        },
+        "⏫": {
+            "commands" : ["a", "wait_medium", "a"],
+            "duration" : 0.5
+        }, 
+        "⬇️": {
+            "commands" : ["left_stick_down"],
+            "duration" : 0.3
+        },
+        "↗️": {
+            "commands" : ["left_stick_right", "a"],
+            "duration" : 0.3
+        },
+        "↖️": {
+            "commands" : ["left_stick_left", "a"],
+            "duration" : 0.3
+        },
+        "❎": {
+            "commands" : ["x"],
+            "duration" : 0.25
+        },
+        "🅱️" : {
+            "commands" : ["b"],
+            "duration" : 0.25
+        },
+        "▶️" : {
+            "commands" : ["left_stick_right","b"],
+            "duration" : 0.25
+        },
+        "◀️" : {
+            "commands" : ["left_stick_left","b"],
+            "duration" : 0.25
+        },
+        "⤵️" : {
+            "commands" : ["left_stick_down", "b"],
+            "duration" : 0.5
+        }
+    }
+  }
