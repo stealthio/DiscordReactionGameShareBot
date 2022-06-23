@@ -2,7 +2,7 @@
 
 A bot that sends a message with reactions to a configurable channel. Each reaction is mapped to a configurable virtual XBox360 controller, this allows local multiplayer using Discord reactions and screen sharing.
 
-![grafik](https://user-images.githubusercontent.com/20127926/175168716-53eae76e-9e2c-4a13-afe6-db1d0cd509e4.png)
+![ezgif-4-afda85f0f9](https://user-images.githubusercontent.com/20127926/175341127-23033705-0740-4464-b8cd-62b858e99f30.gif)
 
 Each reaction is mapped in a JSON to any amount of controller inputs to allow complex interactions.
 ```
