@@ -1,5 +1,7 @@
 {
     "token" : "",
     "channelId" : 989181971764748320,
-    "gameConfiguration" : "niddhog.json"
+    "gameConfiguration" : "stickfight.json",
+    "votingMode" : 1,
+    "votingTime" : 5.0
 }

@@ -1,3 +1,4 @@
+import asyncio
 import time
 import threading
 import vgamepad
@@ -187,11 +188,13 @@ class DiscordClient(discord.Client):
             await reaction.remove(user)
             return
         
-        target_mapper = mappers[self.user_mapping[user.id]]
-
         if reaction.emoji in gameConfig["actions"]:
-            action = gameConfig["actions"][reaction.emoji]
-            target_mapper.exec_actions(action)
+            if config["votingMode"] == 0:
+                target_mapper = mappers[self.user_mapping[user.id]]
+                action = gameConfig["actions"][reaction.emoji]
+                target_mapper.exec_actions(action)
+            elif config["votingMode"] == 1:
+                self.team_commands[self.user_mapping[user.id]].append(reaction.emoji)
 
         await reaction.remove(user)
 
@@ -220,6 +223,34 @@ class DiscordClient(discord.Client):
             self.teammessages[team] = await self.channel.send("Team " + team + ":\n")
 
         self.user_mapping = {}
+
+        if config["votingMode"] == 1:
+            self.team_commands = []
+            for team in teams:
+                self.team_commands.append([])
+
+
+            self.timer_message = await self.channel.send("Timer - " + str(config["votingTime"]) + " seconds")
+            self.timer = config["votingTime"]
+
+            self.timer_task = self.loop.create_task(self.timer_counter())
+
+    async def timer_counter(self):
+        while True:
+            time.sleep(0.25)
+            self.timer -= 0.25
+            if self.timer <= 0:
+                self.timer = config["votingTime"]
+                print(self.team_commands)
+                for i in range(len(self.team_commands)):
+                    team_command = self.team_commands[i]
+                    if len(team_command) > 0:
+                        most_used = max(set(team_command), key = team_command.count)
+                        print("Team " + str(i) + most_used)
+                        action = gameConfig["actions"][most_used]
+                        mappers[i].exec_actions(action)
+                        self.team_commands[i] = []
+    
 
 mappers = []
 
