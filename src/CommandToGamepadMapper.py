@@ -6,9 +6,9 @@ class CommandToGamepadMapper:
     def __init__(self, gamepad_object):
         self.gamepad_object = gamepad_object
     
-    def exec_actions(self, actions):
-        commands = actions["commands"]
-        duration = actions["duration"]
+    def exec_action(self, action):
+        commands = action["commands"]
+        duration = action["duration"]
         for i in range(len(commands)):
             command = commands[i]
             chain = i < len(commands) - 1
