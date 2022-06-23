@@ -1,4 +1,4 @@
-# DiscordReactionGameShare
+# Discord Reaction GameShare Bot
 
 A bot that sends a message with reactions to a configurable channel. Each reaction is mapped to a configurable virtual XBox360 controller, this allows local multiplayer using Discord reactions and screen sharing.
 
