@@ -30,7 +30,6 @@ class DiscordClient(discord.Client):
         self.channel = self.get_channel(channel)
 
     def execute_async_function_parallel(self, function, *args):
-        print("Executing function: " + function.__name__ + " with args: " + str(args))
         asyncio.run_coroutine_threadsafe(function(*args), self.loop)
 
     def run_parallel(self, function, *args):
