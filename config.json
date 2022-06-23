@@ -1,7 +1,7 @@
 {
     "token" : "",
     "channelId" : 989181971764748320,
-    "gameConfiguration" : "stickfight.json",
+    "gameConfiguration" : "game-configurations/stickfight.json",
     "votingMode" : 1,
-    "votingTime" : 5.0
+    "votingTime" : 5
 }
